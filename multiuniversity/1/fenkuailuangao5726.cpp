@@ -1,0 +1,117 @@
+#include <iostream>
+#include <stdio.h>
+#include <string.h>
+#include <cmath>
+#include <queue>
+#include <map>
+using namespace std;
+struct Node{
+	int x,sum;
+}b[1000];
+int t[100000*4],a[100010];
+int gcd(int x,int y){
+	if(y==0) return x;
+	return gcd(y,x%y);
+}
+
+void build(int l,int r,int rt){
+	if(l==r){
+		t[rt]=a[l-1];
+		return;
+	}
+	int mid=l+r>>1,ls=rt<<1,rs=ls|1;
+	build(l,mid,ls);
+	build(mid+1,r,rs);
+	t[rt]=gcd(t[ls],t[rs]);
+}
+
+int query(int x,int y,int l,int r,int rt){
+	if(l==x&&y==r){
+		return t[rt];
+	}
+	int mid=l+r>>1,ls=rt<<1,rs=ls|1;
+	if(x<=mid){
+		if(y<=mid){
+			return query(x,y,l,mid,ls);
+		}
+		else{
+			return gcd(query(x,mid,l,mid,ls),query(mid+1,y,mid+1,r,rs));
+		}
+	}
+	else{
+			return query(x,y,mid+1,r,rs);
+	}
+}
+map<int,long long>M;
+int x,y,n,m;
+int main(){
+	int T,cas=1;
+	scanf("%d",&T);
+	while(T--){
+		scanf("%d",&n);
+		for(int i=0;i<n;i++)
+			scanf("%d",&a[i]);
+		int n1=(int) sqrt(n*1.0);
+		M.clear();
+		for(int i=0;i<n;i+=n1){
+			for(int j=0;j<n1&&i+j<n;j++){
+				int tmp=a[i+j];
+				M[tmp]++;
+				for(int k=j+1;k<n1&&k<i+n1;k++){
+					tmp=gcd(tmp,a[i+k]);
+					M[tmp]++;
+				}
+
+			}
+			int k=i+n1-1;
+			if(k>=n) break;
+			int x=a[k];
+			int l=0;
+			for(int j=k;j>=i;j--,l++){
+				x=gcd(x,a[j]);
+				b[l].x=x;
+				b[l].sum=1;
+			}
+			int cnt=0;
+			for(int j=1;j<l;j++){
+				if(b[cnt].x==b[j].x){
+					b[cnt].sum+=b[j].x;
+				}
+				else b[++cnt]=b[j];
+			}
+			l=cnt+1;
+			int ct=0;
+			for(int j=k+1;j<n;j++){
+				cnt=0;
+				int flag=b[0].x;
+				b[0].x=gcd(b[0].x,a[j]);
+				if(flag==b[0].x){
+					ct++;
+					continue;
+				}
+				M[flag]+=b[0].sum*ct;
+				for(int r=1;r<l;r++)
+					M[b[r].x]+=b[r].sum*ct;
+				ct=1;		
+				for(int r=1;r<l;r++){
+					b[r].x=gcd(b[r].x,a[j]);
+					if(b[r].x==b[cnt].x) b[cnt].sum+=b[r].sum;
+						else b[++cnt]=b[r];
+				}
+				l=cnt+1;
+			}
+			if(ct)
+			for(int r=0;r<l;r++)
+					M[b[r].x]+=b[r].sum*ct;
+		}
+		int m;
+		printf("Case #%d:\n",cas++);
+		scanf("%d",&m);
+		build(1,n,1);
+		while(m--){
+			scanf("%d%d",&x,&y);
+			int ans=query(x,y,1,n,1);
+			printf("%d %lld\n",ans,M[ans]);
+		}
+	}
+}

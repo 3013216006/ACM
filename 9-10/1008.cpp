@@ -1,0 +1,57 @@
+#include <iostream>
+#include <stdio.h>
+#include <string.h>
+using namespace std;
+
+int getl(int l,int r){
+	int ret=1;
+	l=r-l+1;
+	while((1<<ret)<=l) ret++;
+	ret--;
+	return ret;
+}
+int a[100011][20];
+int getans(int l,int r,int ans){
+	int ret=0;
+	int x=getl(l,r);
+	if(min(a[l][x],a[r-(1<<x)][x])>ans) return r; 
+	while(l<r){
+		int mid=(l+r)>>1;
+		int x=getl(l,mid);
+		if(min(a[l][x],a[mid-(1<<x)+1][x])<=ans) r=mid;
+			else l=mid+1;
+	}
+	return l;
+}
+int x,y,n,m;
+int main(){
+	int T;
+	scanf("%d",&T);
+	while(T--){
+		scanf("%d",&n);
+		for(int i=1;i<=n;i++){
+			scanf("%d",&a[i][0]);
+		}
+		int len=1;
+		for(int i=1;;i++){
+			int l=1<<i;
+			if(l>n) break;
+			len++;
+			for(int j=1;j+l<=n;j++)
+				a[j][i]=min(a[j][i-1],a[j+l/2][i-1]);
+		}
+		scanf("%d",&m);
+		for(int i=0;i<m;i++){
+			scanf("%d%d",&x,&y);
+			if(x==y) {printf("%d\n",a[x][0]);continue;}
+			x++;
+			int ans=a[x-1][0];
+			while(x<=y){
+				x=getans(x,y,ans);
+				ans=ans%a[x][0];
+				x++;
+			}
+			printf("%d\n",ans);
+		}
+	}
+}

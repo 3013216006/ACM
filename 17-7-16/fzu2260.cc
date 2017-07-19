@@ -1,0 +1,62 @@
+#include <iostream>
+#include <queue>
+#include <stdio.h>
+#include <string.h>
+#include <algorithm>
+using namespace std;
+
+struct List{
+	int x,next,pre;
+}a[1000020];
+
+struct Node{
+	int x,y;
+	Node(){}
+	Node(int _x,int _y){
+		x=_x,y=_y;
+	}
+};
+bool vis[1000020];
+
+queue<Node> Q;
+void erase(int x,int y){
+	int pre=a[x].pre,nex=a[x].next;
+	a[pre].next=nex,a[nex].pre=pre;
+	if(!vis[nex]){
+		if(a[pre].x>a[nex].x){
+			Q.push(Node(nex,y+1));
+			vis[nex]=1;
+		}
+	}
+}
+
+int main(){
+	int n;
+	while(~scanf("%d",&n)){
+		while(!Q.empty()) Q.pop();
+		for(int i=1;i<=n;i++){
+			scanf("%d",&a[i].x);
+			a[i].pre=i-1;
+			a[i].next=i+1;
+			vis[i]=0;
+			if(a[i-1].x>a[i].x) Q.push(Node(i,1)),vis[i]=1;
+		}
+		a[n+1].x=1000000000;
+		int ans=0;
+		while(!Q.empty()){
+			Node x=Q.front();
+			ans=x.y;
+			Q.pop();
+			erase(x.x,x.y);
+		}
+		printf("%d\n",ans);
+		int flag=0,st=1;
+		while(st<=n){
+			if(flag) printf(" ");
+			flag=1;
+			printf("%d",a[st].x);
+			st=a[st].next;
+		}
+		puts("");
+	}
+}

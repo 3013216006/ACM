@@ -1,0 +1,128 @@
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <cmath>
+using namespace std;
+const double eps = 1e-6;
+const int maxn = 30;
+int sign(double x){
+	if(fabs(x)<eps) return 0;
+	return x < 0 ? -1 : 1;
+}
+
+double x[maxn],y[maxn];
+double v,b,g;
+int tv,tb,tg,n;
+
+int main(){
+	while(~scanf("%d%d%d",&tv,&tb,&tg)){
+		if(tv==0&&tb==0&&tg==0) break;
+		v=-tv;
+		b=tb;
+		g=tg;
+		scanf("%d",&n);
+		for(int i=0;i<n;i++){
+			scanf("%lf%lf",x+i,y+i);
+		}
+		x[n] = x[0];y[n] = y[0];
+		double ans = 1e20;
+		double t = 1e20;
+		if(tg==0){
+			if(tv==0){
+				if(tb==0){
+					puts("Miss!");
+					continue;
+				}else{
+					for(int i=0;i<n;i++){
+						if(sign(x[i]-x[i+1])==0||sign(x[i])==0||sign(x[i+1])==0){
+							continue;			
+						}else{
+							double k2 = (y[i+1]-y[i])/(x[i+1]-x[i]);
+							double b2 = y[i]-k2*x[i];
+							t = b2/b;
+							ans = min(ans,t);	
+						}
+					}
+				}
+			}else{
+				double k1 = b/v;
+				for(int i=0;i<n;i++){
+					if(sign(x[i]-x[i+1])==0){
+						double y1 = k1*x[i];
+						if(sign(y1-y[i])*sign(y1-y[i+1])<0){
+							t = x[i]/v;
+							ans = min(t,ans);
+						}
+					}else{
+						double k2 = (y[i+1]-y[i])/(x[i+1]-x[i]);
+						double b2 = y[i]-k2*x[i];
+						if(sign(k1-k2)!=0){
+							double x3 = b2/(k1-k2);
+							if(sign(x3-x[i])*sign(x3-x[i+1])<0){
+								t = x3/b;
+								ans = min(t,ans);
+							}
+						}
+					}	
+				}
+			}
+		}else{
+			if(tv==0){
+				if(tb==0){
+					puts("Miss!");
+					continue;
+				}else{
+					for(int i=0;i<n;i++){
+						if(sign(x[i]-x[i+1])==0||sign(x[i])==0||sign(x[i+1])==0){
+							continue;
+						}else{
+							double k2 = (y[i+1]-y[i])/(x[i+1]-x[i]);
+							double b2 = y[i]-k2*x[i];
+							double dt = b*b-4.0*b2*0.5*g;
+							if(sign(dt)<=0) continue;
+							dt = fabs(dt);
+							t = (b-sqrt(dt))/g;
+							ans = min(ans,t);
+						}
+					}
+				}	
+			}else{
+				double k1 = -g*0.5/v/v;
+				double b1 = b/v;
+				//printf("%.2f %.2f\n",k1,b1);
+				for(int i=0;i<n;i++){
+					//printf("x1,y1 = %.2f %.2f\n",x[i],y[i]);
+					//printf("x2,y2 = %.2f %.2f\n",x[i+1],y[i+1]);
+					if(sign(x[i]-x[i+1])==0){
+						double y1 = k1*x[i]*x[i]+b1;
+						if(sign(y1-y[i])*sign(y1-y[i+1])<0){
+							t = x[i]/v;
+							ans = min(ans,t);
+						}
+					}else{
+						double k2 = (y[i+1]-y[i])/(x[i+1]-x[i]);
+						double b2 = y[i]-k2*x[i];
+						double dt = (b1-k2)*(b1-k2)+4.0*k1*b2;
+						if(sign(dt)<=0) continue;
+						dt = fabs(dt);
+						double x1 = ((k2-b1)+sqrt(dt))*0.5/k1;
+						double x2 = ((k2-b1)-sqrt(dt))*0.5/k1;
+						if(sign(x1-x[i])*sign(x1-x[i+1])<0){
+							t = x1/v;
+							ans = min(ans,t);
+							//printf("t = %.2f\n",t);
+						}
+						if(sign(x2-x[i])*sign(x2-x[i+1])<0){
+							t = x2/v;
+							//printf("t = %.2f\n",t);
+							ans = min(ans,t);
+						}
+					}
+				}
+			}
+		}
+		if(ans>1e9) puts("Miss!");
+		else printf("%.2f\n",ans);
+	}
+	return 0;
+}

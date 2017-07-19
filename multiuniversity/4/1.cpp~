@@ -1,0 +1,62 @@
+#include <iostream>
+#include <stdio.h>
+#include <string.h>
+#include <algorithm>
+using namespace std;
+
+void pre_kmp(char x[],int m,int _next[]){
+	_next[0]=m;
+	int j=0;
+	while(j+1<m&&x[j]==x[j+1]) j++;
+	_next[1]=j;
+	int k=1;
+	for(int i=2;i<m;i++){
+		int p=_next[k]+k-1;
+		int L=_next[i-k];
+		if(i+L<p+1) _next[i]=L;
+		else{
+			j=max(0,p-i+1);
+			while(i+j<m&&x[i+j]==x[j]) j++;
+			_next[i]=j;
+			k=i;
+		}
+	}
+}
+
+void ekmp(char x[],int m,char y[],int n,int _next[],int extend[]){
+	pre_kmp(x,m,_next);
+	int j=0;
+	while(j<n&&j<m&&x[j]==y[j]) j++;
+	extend[0]=j;
+	int k=0;
+	for(int i=1;i<n;i++){
+		int p=extend[k]+k-1;
+		int L=_next[i-k];
+		if(i+L<p+1) extend[i]=L;
+		else{
+			j=max(0,p-i+1);
+			while(i+j<n&&j<m&&y[i+j]==x[j])j++;
+			extend[i]=j;
+			k=i;
+		}
+	}
+}
+char s[100100],s1[100100];
+long long dp[100100];
+int _next[100100],extend[100100];
+int main(){
+	int T,cas=1;
+	scanf("%d",&T);
+	while(T--){
+		scanf("%s%s",s,s1);
+		int l=strlen(s),l1=strlen(s1);
+		memset(dp,0,sizeof(dp));
+		dp[0]=1;
+		ekmp(s1,l1,s,l,_next,extend);
+		for(int i=0;i<l;i++){
+			dp[i+1]+=dp[i];
+			if(extend[i]==l1) dp[i+l1]+=dp[i];
+		}
+		printf("Case #%d: %lld\n",cas++,dp[l]);
+	}
+}

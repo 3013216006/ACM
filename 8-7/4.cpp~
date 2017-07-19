@@ -1,0 +1,56 @@
+#include <iostream>
+using namespace std;
+
+int main(){
+	int n,m;
+	memset(prim,0,sizeof(prim));
+	int cnt=0;
+	for(int i=2;i<100000;i++)
+	if(!a[i]){
+		prim[cnt++]=i;
+		for(int j=i+i;j<100000;j+=i)
+			prim[j]=1;
+	}
+	while(~scanf("%d%d",&n,&m)){
+		memset(a,0,sizeof(a));
+		memset(b,0,sizeof(b));
+		for(int i=0;i<m;i++){
+			scanf("%s",s);
+			int flag=1;
+			if(s[0]=='-') flag=-1;
+			int x;
+			sscanf(s+1,"%d",&x);
+			if(a[x]){
+				if(flag==1) puts("Already on");
+				return;
+			}
+			else{
+				if(flag==-1) puts("Already off");
+				return;
+			}
+			int y=x;
+			if(flag==1){
+				for(int i=0;prim[i]*prim[i]<=x;i++)
+				if(x%prim[i]==0){
+					if(b[prim[i]]){
+						printf("Conflict with %d\n",b[prim[i]]);
+						rm(y);
+						return;
+					}
+					while(x%prim[i]==0) x/=prim[i];
+					b[prim[i]]=y;
+				}
+				if(x!=1){
+					if(b[x]){
+						printf("Conflict with %d\n",b[x]);
+						rm(y);
+						return;
+					}
+					b[x]=y;
+				}
+			}
+			else rm(x);
+			puts("Success");
+		}
+	}
+}

@@ -1,0 +1,38 @@
+#include <iostream>
+#include <stdio.h>
+#include <string.h>
+using namespace std;
+int a[20][20],dp[20000][25];
+int main(){
+	int n;
+	while(~scanf("%d",&n)){
+	if(n==0) break;
+	n++;
+		for(int i=0;i<n;i++)
+			for(int j=0;j<n;j++)
+				scanf("%d",&a[i][j]);
+		for(int k=0;k<n;k++)
+			for(int i=0;i<n;i++)
+				for(int j=0;j<n;j++)
+					a[i][j]=min(a[i][j],a[i][k]+a[k][j]);
+		int t=1<<n;
+		memset(dp,0x3f3f,sizeof(dp));
+		for(int i=1;i<n;i++)
+			dp[1<<i][i]=a[0][i];
+		for(int i=2;i<t;i++){
+			if(i&1) continue;
+			for(int j=1;j<n;j++)
+				if(i&(1<<j)){
+					for(int k=1;k<n;k++)
+						if(i&(1<<k))
+							if(k!=j)
+								dp[i][j]=min(dp[i][j],dp[i-(1<<j)][k]+a[k][j]);
+				}
+		}
+		t--;
+		for(int i=1;i<n;i++)
+			dp[t][0]=min(dp[t-1][i]+a[i][0],dp[t][0]);
+		if(t==1) dp[1][0]=0;
+		printf("%d\n",dp[t][0]);
+	}
+}

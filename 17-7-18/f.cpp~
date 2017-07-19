@@ -1,0 +1,89 @@
+#include <iostream>
+#include <stdio.h>
+#include <string.h>
+#define N 800200
+using namespace std;
+inline bool equal(int *r,int p,int q,int l){
+	return r[p]==r[q]&& r[p+l]==r[q+l];
+}
+
+int wa[N],wb[N],wv[N],_ws[N];
+void da(int r[],int sa[],int n,int m){
+	int *x=wa,*y=wb;
+	for(int i=0;i<m;i++) _ws[i]=0;
+	for(int i=0;i<n;i++) _ws[x[i]=r[i]]++;
+	for(int i=1;i<m;i++) _ws[i]+=_ws[i-1];
+	for(int i=n-1;i>=0;i--) sa[--_ws[x[i]]]=i;
+	for(int j=1,p=1;p<n;j*=2,m=p){
+		p=0;
+		for(int i=n-j;i<n;i++) y[p++]=i;
+		for(int i=0;i<n;i++) if (sa[i]>=j) y[p++] = sa[i] - j;
+		for(int i=0;i<n;i++) wv[i]=x[y[i]];
+		for(int i=0;i<m;i++) _ws[i]=0;
+		for(int i=0;i<n;i++) _ws[wv[i]]++;
+		for(int i=1;i<m;i++) _ws[i]+=_ws[i-1];
+		for(int i=n-1;i>=0;i--) sa[--_ws[wv[i]]]=y[i];
+		swap(x,y);
+		x[sa[0]]=0;
+		p=1;
+		for(int i=1;i<n;i++){
+			x[sa[i]]=(equal(y,sa[i-1],sa[i],j))?p-1:p++;
+		}
+
+	}
+}
+void calh(int r[],int sa[],int h[],char s[],int n){
+	for(int i=0,k=0;i<n;i++){
+		if(k>0)k--;
+		for(int j=sa[r[i]-1];s[i+k]==s[j+k];k++);
+		h[r[i]]=k;
+	}
+}
+
+int d[200200],r[200200],sa[200200],a[100100],b[100100];
+int ans[200200];
+
+int main(){
+	int T;
+	int n,m,cas=1;
+	scanf("%d",&T);
+	while(T--){
+		int n,m;
+		scanf("%d%d",&n,&m);
+		int cnt=0;
+		for(int i=0;i<n;i++){
+			scanf("%d",&a[i]);
+			d[cnt++]=a[i]+1;
+		}
+		d[cnt++]=11;
+		int x=cnt;
+		for(int i=0;i<m;i++){
+			scanf("%d",&b[i]);
+			d[cnt++]=b[i]+1;
+		}
+		d[cnt]=0;
+		da(d,sa,cnt+1,15);
+		for(int i=0;i<=cnt;i++)
+			r[sa[i]]=i;
+//		for(int i=0;i<=cnt;i++)
+//			cout << d[i] << endl;
+		int i=0,j=0;
+		int l=0;
+		while(i<n&&j<m){
+			if(r[i]<r[j+x]){
+				ans[l++]=b[j++];
+			}
+			else ans[l++]=a[i++];
+		}
+		while(i<n){
+			ans[l++]=a[i++];
+		}
+		while(j<m) ans[l++]=b[j++];
+		printf("Case %d: ",cas++);
+		for(int i=0;i<l;i++)
+			printf("%d",ans[i]);
+		puts("");
+
+	}
+
+}

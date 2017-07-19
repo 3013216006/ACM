@@ -1,0 +1,41 @@
+#include <utility>
+#include <algorithm>
+#include <cstdlib>
+#include <ctime>
+#include <iostream>
+using namespace std;
+ 
+typedef pair<int, int> P;
+ 
+const int N = 5;
+pair<int, int> items[N];
+ 
+bool cmp(const P &a, const P&b)
+{
+    if (a.first < b.first)
+        return true;
+    else return false;
+}
+ 
+int main()
+{
+    srand(time(NULL));
+ 
+    for (int i = 0; i < N; i++)
+        items[i] = make_pair(rand(), i + 1);
+ 
+    cout << "before sorted:" << endl;
+    for (int i = 0; i < N; i++)
+        cout << "(" << items[i].first << ", " << items[i].second << ")\t";
+    cout << endl;
+ 
+    sort(items, items + N, cmp);
+ 
+    cout << "\nafter sorted:" << endl;
+    for (int i = 0; i < N; i++)
+        cout << "(" << items[i].first << ", " << items[i].second << ")\t";
+    cout << endl;
+ 
+    cin.get();
+    return 0;
+}
