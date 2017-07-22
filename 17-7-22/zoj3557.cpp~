@@ -14,7 +14,7 @@ long long mypow(long long x,int k,int p){
 
 long long getans(int m,int n,int p){
 	if(m==0&&n==0) return 1;
-	//cout << m << " " << n << endl;
+	cout << m << " " << n << endl;
 	long long ret=1;
 	long long div=1;
 	int mm=m%p,nn=n%p;
@@ -23,7 +23,8 @@ long long getans(int m,int n,int p){
 		ret=(ret*nn)%p;
 		div=(div*i)%p;
 	}
-	return ret*mypow(div,p-2,p)%p*getans(m/p,n/p,p)%p;
+	cout << ret << endl;
+	return ret*mypow(ret,p-2,p)%p*getans(m/p,n/p,p)%p;
 }
 
 int main(){
