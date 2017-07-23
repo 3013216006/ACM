@@ -132,7 +132,7 @@ int main()
             if (q == 1)
             {
                 scanf("%d%d%d", &v, &x, &k);
-                change(1, pos1[v], pos2[v], x, k,deep[v]);
+                change(1, pos1[v], pos2[v], x, k);
             }
             if (q == 2)
             {

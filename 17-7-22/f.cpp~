@@ -90,7 +90,7 @@ void change(int x, int l, int r, int x1, int k,int d)
 	    if (r <= tree[x].mid) {change(x*2, l, r, x1, k,d); return;}
 	    if (l > tree[x].mid) {change(x*2+1, l, r, x1, k,d); return;}
 	    change(x*2, l, tree[x].mid, x1, k,d);
-	    long long xx=(long long)(tree[x].z-tree[x*2+1].z)*k;
+	    long long xx=(long long)(tree[x].z-tree[rs].d)*k;
 	    change(x*2+1, tree[x].mid+1, r, x1, k,d);
 	    return;
 }
