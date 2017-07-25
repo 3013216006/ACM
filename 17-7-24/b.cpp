@@ -1,0 +1,66 @@
+#include <iostream>
+#include <stdio.h>
+#include <string.h>
+using namespace std;
+char s[100010],str[100100];
+int T,vis[500];
+int main(){
+	scanf("%s",s);
+	int l=strlen(s);
+	memset(vis,0,sizeof(vis));
+	for(int i=0;i<l;i++)
+		vis[s[i]]=1;
+	scanf("%s",s);
+	int mytmp=0;
+	l=strlen(s);
+	for(int i=0;i<l;i++) if(s[i]=='*') mytmp=1;
+	scanf("%d",&T);
+	while(T--){
+		scanf("%s",str);
+		int l1=strlen(str);
+		/*
+		if(mytmp&&l1==l-1){
+			int flag=1;
+			for(int i=0,j=0;i<l&&flag;i++){
+				if(s[i]=='*'){
+					continue;
+				}
+				if(s[i]=='?'){
+					if(!vis[str[j]]) flag=0;
+					j++;
+					continue;
+				}
+				if(s[i]!=str[j]) flag=0;
+				j++;
+			}
+			if(flag) puts("YES");
+			else puts("NO");
+			continue;
+		}
+*/
+		if(l1<l-mytmp){
+			puts("1NO");
+			continue;
+		}
+		int flag=1;
+		int j=0,i=0;
+		for(i=0;i<l&&flag;i++){
+			if(j>l1) flag=0;
+			if(s[i]=='?'){
+				if(!vis[str[j]]) flag=0;
+				j++;
+				continue;
+			}
+				if(s[i]=='*'){
+					while(j-i<=l1-l&&str[j]>='a'&&str[j]<='z'&&!vis[str[j]])j++;
+					continue;
+				}
+			if(s[i]!=str[j]) flag=0;
+			j++;
+		}
+		if(j!=l1) flag=0;
+		if(i!=l) flag=0;
+		if(flag) puts("YES");
+		else puts("NO");
+	}
+}
