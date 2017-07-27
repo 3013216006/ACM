@@ -5,7 +5,37 @@
 #include <algorithm>
 #include <vector>
 #include <queue>
-using namespace std;
+namespace fastIO {
+	#define BUF_SIZE 100000
+	//fread -> read
+	bool IOerror = 0;
+	inline char nc() {
+		static char buf[BUF_SIZE], *p1 = buf + BUF_SIZE, *pend = buf + BUF_SIZE;
+		if(p1 == pend) {
+			p1 = buf;
+			pend = buf + fread(buf, 1, BUF_SIZE, stdin);
+			if(pend == p1) {
+				IOerror = 1;
+				return -1;
+			}
+		}
+		return *p1++;
+	}
+	inline bool blank(char ch) {
+		return ch == ' ' || ch == '\n' || ch == '\r' || ch == '\t';
+	}
+	inline void read(int &x) {
+		char ch;
+		while(blank(ch = nc()));
+		if(IOerror)
+			return;
+		for(x = ch - '0'; (ch = nc()) >= '0' && ch <= '9'; x = x * 10 + ch - '0');
+	}
+	#undef BUF_SIZE
+};
+
+//using namespace std;
+using namespace fastIO;
 struct Node{
 	int l,r;
 }a[1000100];
@@ -40,7 +70,7 @@ struct mynode{
 		l=_l,r=_r;
 	}
 };
-queue<mynode> Q;
+std::queue<mynode> Q;
 
 int getpow(int xx,int k){
 	long long x=xx;
@@ -112,19 +142,22 @@ int main(){
 	init();
 	int n,cas=1;
 	while(true){//~scanf("%d",&n)){
-		n=getnum();
+		read(n);
+		if(fastIO::IOerror) break;
 //		cout << n << endl;
-		if(n==0) break;
+		//if(n==0) break;
 		////cout << n << endl;
 		for(int i=0;i<n;i++){
 		//	a[i].l=l[i];
-			a[i].l=getnum();
+			//a[i].l=getnum();
+			read(a[i].l);
 //		cout<< a[i].l << endl;
 		}
 			//scanf("%d",&a[i].l);
 //		fread(l,sizeof(int),n,stdin);
 		for(int i=0;i<n;i++){
-			a[i].r=getnum();
+			//a[i].r=getnum();
+			read(a[i].r);
 //			cout << a[i].r << endl;
 			//scanf("%d",&a[i].r);
 			//a[i].id=i;
@@ -134,20 +167,26 @@ int main(){
 //		now[n]=-1;
 //		sort(a,a+n,cmp);
 		ans=1;
+		/*
 		for(int i=0;i<n;i++){
 //			if(now[a[i].l]==-1) now[a[i].l]=i;
 			//v[a[i].l].push_back(i);
 			if(a[i].l==a[i].r) continue;
 			int l=a[i].r-a[i].l;
 			int r=i-a[i].l+1;
-			if(r<0) r=0;
+			if(r<0) continue;
 //			cout << l << " " << r << endl;
 //			cout << num[l]  << endl;
 //			cout << inv[r] << endl;
 //			cout << inv[l-r] << endl;
-			ans=ans*num[l]%mod*inv[r]%mod*inv[l-r]%mod;
+			ans=ans*num[l];
+			if(ans>=mod) ans%=mod;
+			ans*=inv[r];
+			if(ans>=mod) ans%=mod;
+			ans*=inv[l-r];
+			if(ans>=mod) ans%=mod;
 //			cout << ans << endl;
-		}
+		}*/
 		//ans=1;
 	//	while(!Q.empty()) Q.pop();
 	//	Q.push(mynode(0,n-1));
@@ -156,6 +195,6 @@ int main(){
  	//		Q.pop();
  	//		getans(tmp.l,tmp.r);
  	//	}
-		printf("Case #%d: %lld\n",cas++,ans);
+		//printf("Case #%d: %lld\n",cas++,ans);
 	}
 }

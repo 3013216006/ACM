@@ -5,9 +5,40 @@
 #include <algorithm>
 #include <vector>
 #include <queue>
-using namespace std;
+namespace fastIO {
+	#define BUF_SIZE 100000
+	//fread -> read
+	bool IOerror = 0;
+	inline char nc() {
+		static char buf[BUF_SIZE], *p1 = buf + BUF_SIZE, *pend = buf + BUF_SIZE;
+		if(p1 == pend) {
+			p1 = buf;
+			pend = buf + fread(buf, 1, BUF_SIZE, stdin);
+			if(pend == p1) {
+				IOerror = 1;
+				return -1;
+			}
+		}
+		return *p1++;
+	}
+	inline bool blank(char ch) {
+		return ch == ' ' || ch == '\n' || ch == '\r' || ch == '\t';
+	}
+	inline void read(int &x) {
+		char ch;
+		while(blank(ch = nc()));
+		if(IOerror)
+			return;
+		for(x = ch - '0'; (ch = nc()) >= '0' && ch <= '9'; x = x * 10 + ch - '0');
+	}
+	#undef BUF_SIZE
+};
+
+//using namespace std;
+using namespace fastIO;
 struct Node{
 	int l,r;
+	int id;
 }a[1000100];
 int num[1000100],inv[1000100],now[1000100];
 bool cmp(Node a,Node b){
@@ -26,6 +57,7 @@ int getnum(){
 	}
 	while(c[0]>='0'&&c[0]<='9'){
 		n=n*10+c[0]-'0';
+		if(fread(c,1,1,stdin)==0) return 0;
 		fread(c,1,1,stdin);
 	}
 	return n;
@@ -40,7 +72,7 @@ struct mynode{
 		l=_l,r=_r;
 	}
 };
-queue<mynode> Q;
+std::queue<mynode> Q;
 
 int getpow(int xx,int k){
 	long long x=xx;
@@ -57,19 +89,21 @@ int getinv(int x){
 	if(inv[x]!=0) return inv[x];
 	else return inv[x]=getpow(num[x],mod-2);
 }
-
+int flag;
 void getans(int l,int r){
 	//now[a[l].l]++;
 	//cout << l << " " << r << endl;
 	if(l==r) return;
 	int l1=a[l].r-a[l].l;
 	int r1=a[l+1].r-a[l+1].l+1;
-	while(l1==r1){
-		l++;
-		if(l==r) return;
-		l1--;
-		r1=a[l+1].r-a[l+1].l+1;
-	}
+//	while(l1==r1){
+//		l++;
+//		if(l==r) return;
+//		l1--;
+//		r1=a[l+1].r-a[l+1].l+1;
+//	}
+	//std::cout << l << " " << r << std::endl;
+	//td::cout << l1 << " " << r1 << std::endl << std::endl;
 	ans=ans*num[l1];
 	if(ans>=mod) ans%=mod;
 	ans*=getinv(l1-r1);
@@ -79,12 +113,25 @@ void getans(int l,int r){
 	if(ans>=mod)
 	ans%=mod;
 	if(r1==l1){
+		if(a[l].id>=a[l+1].l&&a[l].id<=a[l+1].r)
+		{
+			flag=0;
+			return;
+		}
 		Q.push(mynode(l+1,r));
 		//getans(l+1,r);
 	}
 	else{
 		r1=a[l+1].r+2;
 		l1=now[r1];
+		if(r1!=a[l].id+1){
+			flag=0;
+			return;
+		}
+		if(a[l1].r!=a[l].r){
+			flag=0;
+			return;
+		}
 		Q.push(mynode(l+1,l1-1));
 		Q.push(mynode(l1,r));
 		//getans(l+1,l1-1);
@@ -112,30 +159,40 @@ int main(){
 	init();
 	int n,cas=1;
 	while(true){//~scanf("%d",&n)){
-		n=getnum();
+		//std::cout << "yes" << std::endl;
+		read(n);
+		if(fastIO::IOerror) break;
 //		cout << n << endl;
-		if(n==0) break;
+		//if(n==0) break;
 		////cout << n << endl;
 		for(int i=0;i<n;i++){
 		//	a[i].l=l[i];
-			a[i].l=getnum();
+	//		a[i].l=getnum();
+			read(a[i].l);
 //		cout<< a[i].l << endl;
 		}
 			//scanf("%d",&a[i].l);
 //		fread(l,sizeof(int),n,stdin);
 		for(int i=0;i<n;i++){
-			a[i].r=getnum();
-//			cout << a[i].r << endl;
+	//		a[i].r=getnum();
+			read(a[i].r);
+			a[i].id=i+1;
+			//a[i].id=i;
+		//	std::cout << a[i].r << std::endl;
 			//scanf("%d",&a[i].r);
 			//a[i].id=i;
 			//v[i].clear();
-//			now[i]=-1;
+			now[i]=-1;
 		}
-//		now[n]=-1;
-//		sort(a,a+n,cmp);
+		now[n]=-1;
+		std::sort(a,a+n,cmp);
 		ans=1;
+		
+		
 		for(int i=0;i<n;i++){
-//			if(now[a[i].l]==-1) now[a[i].l]=i;
+			if(now[a[i].l]==-1) now[a[i].l]=i;
+		}
+		/*
 			//v[a[i].l].push_back(i);
 			if(a[i].l==a[i].r) continue;
 			int l=a[i].r-a[i].l;
@@ -153,14 +210,20 @@ int main(){
 			if(ans>=mod) ans%=mod;
 //			cout << ans << endl;
 		}
+		*/
 		//ans=1;
-	//	while(!Q.empty()) Q.pop();
-	//	Q.push(mynode(0,n-1));
- 	//	while(!Q.empty()){
- 	//		mynode tmp=Q.front();
- 	//		Q.pop();
- 	//		getans(tmp.l,tmp.r);
- 	//	}
+		flag=1;
+		while(!Q.empty()) Q.pop();
+		Q.push(mynode(0,n-1));
+ 		while(!Q.empty()){
+ 			mynode tmp=Q.front();
+ 			Q.pop();
+			//std::cout << tmp.l << " " << tmp.r << std::endl;
+ 			getans(tmp.l,tmp.r);
+ 		}
+ 		if(flag)
 		printf("Case #%d: %lld\n",cas++,ans);
+		else 
+		printf("Case #%d: %lld\n",cas++,0ll);
 	}
 }
