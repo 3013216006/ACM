@@ -1,0 +1,120 @@
+/*************************************************************************
+    > File Name: test.cpp
+    > Author: Akira 
+    > Mail: qaq.febr2.qaq@gmail.com 
+ ************************************************************************/
+
+#include<bits/stdc++.h>
+typedef long long LL;
+typedef unsigned long long ULL;
+typedef long double LD;
+#define MST(a,b) memset(a,b,sizeof(a))
+#define CLR(a) MST(a,0)
+#define Sqr(a) ((a)*(a))
+#define ALL(a) a.begin(), a.end()
+#define mp make_pair
+#define pb push_back
+using namespace std;
+
+#define MaxN 100001
+#define MaxM MaxN*10
+#define INF 0x3f3f3f3f
+#define PI 3.1415926535897932384626
+const int mod = 1E9+7;
+const double eps = 1e-6;
+#define bug cout<<88888888<<endl;
+#define debug(x) cout << #x" = " << x << endl;
+template<typename T> T abs(T val){return val>0?val:-val;}
+inline int max2(int a, int b) {return ((a > b)? a : b);}
+inline int min2(int a, int b) {return ((a < b)? a : b);}
+inline int max3(int a, int b, int c) {return max2(a, max2(b, c));}
+inline int min3(int a, int b, int c) {return min2(a, min2(b, c));}
+
+int T,N,M;
+int G[110][110];
+
+void solve()
+{
+    vector<LL> V[N*M+5][N+5];
+    for(int i=1;i<=N;i++)
+    {
+        for(int j=1;j<=M;j++)
+        {
+            V[G[i][j]][i].pb(j);
+        }
+    }
+    LL ans = 0;
+    for(int i=1;i<=N;i++)
+    {
+        for(int j=1;j<=M;j++)
+        {
+            int num = G[i][j];
+            LL L = 1,R = M;
+            int loc = (lower_bound(V[num][i].begin(), V[num][i].end(), j)-V[num][i].begin()-1);
+            cout << i << " " << j << " " << loc << endl;
+            if(loc!=-1) L = V[num][i][loc]+1;
+            ans += (j-L+1)*(R-j+1)*(N-i+1);
+            //cout << i << "--" << j << endl;
+            // debug(L) debug(R)
+            // debug(ans)
+            for(int k=i-1;k>=1;k--)
+            {
+                if(V[num][k].size()==0)
+                {
+                    ans += (j-L+1)*(R-j+1)*(N-i+1);
+                    continue;
+                }
+                int loc = (lower_bound(V[num][k].begin(), V[num][k].end(), j)-V[num][k].begin());
+                if(V[num][k][loc] == j) break;
+                else 
+                {
+                    if(loc==0)
+                    {
+                        R = min(R,V[num][k][loc]-1);
+
+                        ans += (j-L+1)*(R-j+1)*(N-i+1);
+                    }
+                    else if(loc==V[num][k].size())
+                    {
+                        L = max(L, V[num][k][loc-1]+1);
+
+                        ans += (j-L+1)*(R-j+1)*(N-i+1);
+                    }
+                    else
+                    {
+                        L = max(L, V[num][k][loc-1]+1);
+                        R = min(R,V[num][k][loc]-1);
+
+                        ans += (j-L+1)*(R-j+1)*(N-i+1);
+                    }
+                }
+                // debug(L) debug(R)
+                // debug(ans)
+            }
+        }
+    }
+    //debug(ans)
+    LL tot = (1LL*N*(N+1)/2LL)*(1LL*M*(M+1)/2LL);
+    //debug(tot)
+    printf("%.9f\n", ans*1.0/(tot*1.0));
+}
+int main()
+{
+    //std::ios::sync_with_stdio(false);
+    scanf("%d",&T);
+    while(T--)
+    {
+        scanf("%d%d", &N, &M);
+        for(int i=1;i<=N;i++)
+        {
+            for(int j=1;j<=M;j++)
+            {
+                scanf("%d", &G[i][j]);
+            }
+        }
+        solve();
+    }
+    //system("pause");
+    //printf("%lld\n", (x%mod+mod)%mod );
+    //printf("\n%.2lf sec \n", (double)clock() / CLOCKS_PER_SEC);
+}
