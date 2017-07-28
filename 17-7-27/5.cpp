@@ -29,25 +29,30 @@ int getans(int l,int r,int L,int R){
 		l=r1+1;
 	}
 	
+	//cout << "yes" << endl;
 	if(ret==1) return 0;
 	if(ret==2) return 1;
 	int ans=0;
-	mi=R-s[0].r-s[0].l;
 	for(int i=1;i<ret-1;i++){
 		mi=mytmp[i];
+//		cout << mi << endl;
+//		cout << s[i].l << " " << s[i].r << endl;
 		int tmp=0;
 		for(int j=s[i].l;j<=s[i].r;j++){
+//			cout << j << endl;
 			int mx=a[j],r=j;
 			while(mx-mi!=r-j){
 				r++;
 				mx=max(mx,a[r]);
 			}
 			mi=mx+1;
+			j=r;
 			tmp++;
 		}
 		if(i==0||i==ret-1) ans=max(ans,tmp-1);
 		else ans=max(ans,tmp);
 	}
+	//cout << "yes1" << endl;
 	return 1+ans;
 }
 int main(){
