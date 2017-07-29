@@ -1,0 +1,75 @@
+#include <iostream>
+#include <stdio.h>
+#include <string.h>
+#include <algorithm>
+using namespace std;
+long long t[10000<<3];
+long long query(int l,int r,int rt,int L,int R){
+//	cout << l << " " << r << " " << rt << " " << L << " " << R << endl;
+	if(l==L&&r==R){
+		return t[rt];
+	}
+	int mid=L+R>>1;
+	int ls=rt<<1,rs=ls|1;
+//	cout << ls << " " << rs << endl;
+	if(r<=mid) return query(l,r,ls,L,mid);
+	else if(l>mid) return query(l,r,rs,mid+1,R);
+	else return max(query(l,mid,ls,L,mid),query(mid+1,r,rs,mid+1,R));
+}
+
+void change(int x,long long v,int rt,int l,int r){
+	int ls=rt<<1,rs=ls|1,mid=l+r>>1;
+	if(l==r){
+		t[l]=v;
+		return ;
+	}
+	if(x<=mid) change(x,v,ls,l,mid);
+	else change(x,v,rs,mid+1,r);
+	t[rt]=max(t[ls],t[rs]);
+}
+int a[100010],b[100010];
+long long tmp[100010];
+int main(){
+	int n;
+	while(~scanf("%d",&n)){
+		for(int i=0;i<n;i++){
+			scanf("%d",&a[i]);
+		}
+		long long ans=0;
+		for(int i=0;i<n;i++){
+			if(a[i]==10000){
+				int l=0;
+				for(int j=i+1;j<n;j++)
+					b[l++]=a[j];
+				for(int j=0;j<i;j++)
+					b[l++]=a[j];
+				memset(t,0,sizeof(t));
+				memset(tmp,0,sizeof(tmp));
+				for(int i=0;i<l;i++){
+					//cout << i << endl;
+					if(b[i]==10000) continue;
+					int x=query(b[i],10000,1,1,10000);
+					//cout << "yes" << endl;
+					x+=b[i];
+					tmp[i]=x;
+					//cout << "yes1" << endl;
+					change(b[i],x,1,1,10000);
+				}
+				memset(t,0,sizeof(t));
+				for(int i=l-1;i>=0;i--){
+					if(b[i]==10000) continue;
+					int x=query(b[i],10000,1,1,10000);
+					//cout << "yes" << endl;
+					tmp[i]+=x;
+					x+=b[i];
+					change(b[i],x,1,1,10000);
+					//cout << "yes1" << endl;
+				}
+				for(int i=0;i<l;i++){
+					ans=max(ans,tmp[i]);
+				}
+			}
+		}
+		cout << ans+10000 << endl;
+	}
+}
