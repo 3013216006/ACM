@@ -13,7 +13,6 @@ int main(){
 	scanf("%d",&T);
 	while(T--){
 		scanf("%lld%d",&n,&k);
-		if(n>=100000000ll) while(1);
 		if(n==0){
 			puts("0");
 			continue;
