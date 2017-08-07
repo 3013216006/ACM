@@ -1,0 +1,39 @@
+#include <iostream>
+#include <stdio.h>
+#include <string.h>
+using namespace std;
+int vis[100010],p[100010],pl;
+void init(){
+	pl=0;
+	memset(vis,0,sizeof(vis));
+	for(int i=2;i<=100000;i++){
+		if(vis[i]) continue;
+		p[pl++]=i;
+		for(int j=i+i;j<=100000;j+=i)
+			vis[j]=1;
+	}
+}
+
+int main(){
+	init();
+	int T;
+	int n,m;
+	int t1,t2;
+	scanf("%d",&T);
+	while(T--){
+		scanf("%d%d",&n,&m);
+		int flag=1;
+		for(int i=0;i<pl&&flag;i++){
+			t1=0,t2=0;
+			if(n==1) break;
+			if(m==1) break;
+			while(n%p[i]==0) n/=p[i],t1++;
+			while(m%p[i]==0) m/=p[i],t2++;
+			if((t1+t2)%3) flag=0;
+			if(t1*2<t2||t2*2<t1) flag=0;
+		}
+		if(n!=1||m!=1) flag=0;
+		if(flag) puts("Yes");
+		else puts("No");
+	}
+}
