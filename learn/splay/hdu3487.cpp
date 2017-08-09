@@ -31,6 +31,7 @@ void pushdown(int x){
 	t[ls].fl^=1;
 	t[rs].fl^=1;
 	swap(t[x].son[0],t[x].son[1]);
+	t[x].fl=0;
 }
 
 void rotate(int x){
