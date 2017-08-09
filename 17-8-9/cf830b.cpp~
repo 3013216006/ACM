@@ -1,0 +1,47 @@
+#include <iostream>
+#include <stdio.h>
+#include <string.h>
+#include <algorithm>
+using namespace std;
+
+int t[100100];
+int mx=0;
+
+int lowbit(int x){
+	return x&(-x);
+}
+
+void add(int x,int v){
+	while(x<=mx){
+		t[x]=max(t[x],v);
+		x+=lowbit(x);
+	}
+}
+
+int query(int x){
+	int ret=0;
+	while(x){
+		ret=max(ret,t[x]);
+		x-=lowbit(x);
+	}
+	return ret;
+}
+int a[100100];
+
+int main(){
+	int n;
+	while(~scanf("%d",&n)){
+		for(int i=0;i<n;i++){
+			scanf("%d",&a[i]);
+			mx=max(a[i],mx);
+		}
+		memset(t,0,sizeof(t));
+		long long ans=0;
+		for(int i=n-1;i>=0;i--){
+			int t=query(a[i]-1)+1;
+			ans+=t;
+			add(a[i],t);
+		}
+		cout << ans << endl;
+	}
+}
