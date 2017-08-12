@@ -6,7 +6,7 @@
 using namespace std;
 struct Node{
 	int num,next;
-}edge[50000];
+}edge[50020];
 int head[50020],cnt;
 int nw;
 int f,x;
@@ -58,7 +58,7 @@ int l[50010],r[50010],t[50010];
 int ans[50010],n,m;
 map<int,int> M;
 bool cmp(Node1 a,Node1 b){
-	if(a.x==b.x) return a.v>b.v;
+	if(a.x==b.x) return a.v<b.v;
 	return a.x>b.x;
 }
 void dfs(int x){
@@ -83,7 +83,7 @@ int main(){
 		cnt=0;
 		memset(head,-1,sizeof(head));
 		for(int i=1;i<n;i++){
-			scanf("%d%d%d",&f,&a[i].x,&a[i].y);
+			scanf("%d%d%d",&f,&a[i].y,&a[i].x);
 			M[a[i].y]=i;	
 			a[i].id=i;
 			add(f,i);
